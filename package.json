@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "tsc && node ./bin/www",
-    "tsc": "tsc"
+    "start": "node ./bin/www",
+    "build-ts": "tsc",
+    "postinstall": "npm run build-ts"
   },
   "dependencies": {
     "@pusher/chatkit-server": "^2.4.0",
