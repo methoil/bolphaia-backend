@@ -18,7 +18,7 @@ var pusher = new Pusher({
 var playerIds;
 (function (playerIds) {
     playerIds["phrygians"] = "phrygians";
-    playerIds["hitites"] = "hitites";
+    playerIds["hittites"] = "hittites";
 })(playerIds || (playerIds = {}));
 var BOARD_WIDTH = 24;
 var BOARD_HEIGHT = 16;
@@ -35,7 +35,7 @@ router.post('/', function (req, res) {
     var newGame = {
         players: (_a = {},
             _a[phrygianPlayerId] = playerIds.phrygians,
-            _a[hititePlayerId] = playerIds.hitites,
+            _a[hititePlayerId] = playerIds.hittites,
             _a),
         board: initBoard(),
     };
@@ -135,7 +135,7 @@ function initBoard() {
             pieceToPlace = makeHititePiece('levy');
         }
         else if (x === BOARD_HEIGHT - 3) {
-            pieceToPlace = makeHititePiece(playerIds.hitites);
+            pieceToPlace = makeHititePiece(playerIds.hittites);
         }
         else if (x === BOARD_HEIGHT - 2) {
             var rowArray = new Array(BOARD_WIDTH).fill(null);
@@ -158,7 +158,7 @@ function makePhrygianPiece(pieceId) {
     return makePiece(playerIds.phrygians, pieceId);
 }
 function makeHititePiece(pieceId) {
-    return makePiece(playerIds.hitites, pieceId);
+    return makePiece(playerIds.hittites, pieceId);
 }
 function makePiece(player, pieceId) {
     return _.extend(_.find(pieceMeta_model_1.pieceDefs, function (meta) { return meta.pieceId === pieceId; }), { player: player });

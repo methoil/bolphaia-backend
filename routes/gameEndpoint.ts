@@ -18,7 +18,7 @@ var pusher = new Pusher({
 // TODO: import these...
 enum playerIds {
   phrygians = 'phrygians',
-  hitites = 'hitites',
+  hittites = 'hittites',
 }
 
 const BOARD_WIDTH: number = 24;
@@ -42,7 +42,7 @@ router.post('/', (req, res) => {
   const newGame = {
     players: {
       [phrygianPlayerId]: playerIds.phrygians,
-      [hititePlayerId]: playerIds.hitites,
+      [hititePlayerId]: playerIds.hittites,
     },
     board: initBoard(),
   };
@@ -144,7 +144,7 @@ function initBoard(): Array<IPieceMeta | null>[] {
     } else if (x === BOARD_HEIGHT - 4) {
       pieceToPlace = makeHititePiece('levy');
     } else if (x === BOARD_HEIGHT - 3) {
-      pieceToPlace = makeHititePiece(playerIds.hitites);
+      pieceToPlace = makeHititePiece(playerIds.hittites);
     } else if (x === BOARD_HEIGHT - 2) {
       const rowArray = new Array(BOARD_WIDTH).fill(null);
       rowArray[2] = makeHititePiece('cataphract');
@@ -170,7 +170,7 @@ function makePhrygianPiece(pieceId: string) {
 }
 
 function makeHititePiece(pieceId: string) {
-  return makePiece(playerIds.hitites, pieceId);
+  return makePiece(playerIds.hittites, pieceId);
 }
 
 function makePiece(player: playerIds, pieceId: string): IPieceMeta {

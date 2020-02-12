@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var playerIds;
 (function (playerIds) {
     playerIds["phrygians"] = "phrygians";
-    playerIds["hitites"] = "hitites";
+    playerIds["hittites"] = "hittites";
 })(playerIds = exports.playerIds || (exports.playerIds = {}));
 var pieceTypes;
 (function (pieceTypes) {
