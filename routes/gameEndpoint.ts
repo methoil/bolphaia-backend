@@ -21,19 +21,13 @@ enum playerIds {
   hittites = 'hittites',
 }
 
-const BOARD_WIDTH: number = 24;
-const BOARD_HEIGHT: number = 16;
 const games = {};
 let lastUpdate = {
   player: null,
   updatedSquares: [],
 };
 
-interface IPieceMeta {
-  pieceType: string;
-  player: string;
-  health: number;
-}
+
 
 router.post('/', (req, res) => {
   const room = req.body.room;
@@ -110,6 +104,9 @@ router.post('/:room', (req, res) => {
 
       // just resend the data, client will ignore if it's their move
       // no need to resend the whole board - maybe when/if there's more validation?
+      if (toPiece?.player !== playerSide && !fromPiece) {
+        req.body.push(game.board[])
+      }
       lastUpdate = req.body;
       res.send(req.body);
       pusher.trigger('game-' + room, 'board-updated', {});
@@ -118,66 +115,5 @@ router.post('/:room', (req, res) => {
     res.status(404).send(`Game not found: ${room}`);
   }
 });
-
-function initBoard(): Array<IPieceMeta | null>[] {
-  const boardState: Array<IPieceMeta | null>[] = [];
-  for (let x = 0; x < BOARD_HEIGHT; x++) {
-    let pieceToPlace: IPieceMeta | null = null;
-    if (x === 1) {
-      const rowArray: Array<IPieceMeta | null> = new Array(BOARD_WIDTH).fill(null);
-      rowArray[2] = makePhrygianPiece('cataphract');
-      rowArray[rowArray.length - 3] = rowArray[4] = makePhrygianPiece('cataphract');
-
-      rowArray[4] = makePhrygianPiece('archer');
-      rowArray[7] = makePhrygianPiece('archer');
-      rowArray[10] = makePhrygianPiece('archer');
-      rowArray[13] = makePhrygianPiece('archer');
-      rowArray[16] = makePhrygianPiece('archer');
-      rowArray[19] = makePhrygianPiece('archer');
-
-      boardState.push(rowArray);
-      continue;
-    } else if (x === 2) {
-      pieceToPlace = makePhrygianPiece('hoplite');
-    } else if (x === 3) {
-      pieceToPlace = makePhrygianPiece('levy');
-    } else if (x === BOARD_HEIGHT - 4) {
-      pieceToPlace = makeHititePiece('levy');
-    } else if (x === BOARD_HEIGHT - 3) {
-      pieceToPlace = makeHititePiece(playerIds.hittites);
-    } else if (x === BOARD_HEIGHT - 2) {
-      const rowArray = new Array(BOARD_WIDTH).fill(null);
-      rowArray[2] = makeHititePiece('cataphract');
-      rowArray[BOARD_WIDTH - 3] = makeHititePiece('cataphract');
-
-      rowArray[4] = makeHititePiece('archer');
-      rowArray[7] = makeHititePiece('archer');
-      rowArray[10] = makeHititePiece('archer');
-      rowArray[13] = makeHititePiece('archer');
-      rowArray[16] = makeHititePiece('archer');
-      rowArray[19] = makeHititePiece('archer');
-      boardState.push(rowArray);
-      continue;
-    }
-
-    boardState.push(new Array(BOARD_WIDTH).fill(pieceToPlace));
-  }
-  return boardState;
-}
-
-function makePhrygianPiece(pieceId: string) {
-  return makePiece(playerIds.phrygians, pieceId);
-}
-
-function makeHititePiece(pieceId: string) {
-  return makePiece(playerIds.hittites, pieceId);
-}
-
-function makePiece(player: playerIds, pieceId: string): IPieceMeta {
-  return _.extend(
-    _.find(pieceDefs, meta => meta.pieceId === pieceId),
-    { player },
-  );
-}
 
 module.exports = router;
