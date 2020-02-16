@@ -1,5 +1,5 @@
 // import { playerIds } = require('../models/pieceMeta.model');
-import { pieceDefs } from '../models/pieceMeta.model';
+import { generateNewBoard } from '../models/boardSetup';
 
 var _ = require('lodash/core');
 var express = require('express');
@@ -27,8 +27,6 @@ let lastUpdate = {
   updatedSquares: [],
 };
 
-
-
 router.post('/', (req, res) => {
   const room = req.body.room;
   const phrygianPlayerId = req.body.whitePlayer;
@@ -38,7 +36,7 @@ router.post('/', (req, res) => {
       [phrygianPlayerId]: playerIds.phrygians,
       [hititePlayerId]: playerIds.hittites,
     },
-    board: initBoard(),
+    board: generateNewBoard(),
   };
 
   games[room] = newGame;
@@ -104,9 +102,6 @@ router.post('/:room', (req, res) => {
 
       // just resend the data, client will ignore if it's their move
       // no need to resend the whole board - maybe when/if there's more validation?
-      if (toPiece?.player !== playerSide && !fromPiece) {
-        req.body.push(game.board[])
-      }
       lastUpdate = req.body;
       res.send(req.body);
       pusher.trigger('game-' + room, 'board-updated', {});

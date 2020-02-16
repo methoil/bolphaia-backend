@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // import { playerIds } = require('../models/pieceMeta.model');
-var pieceMeta_model_1 = require("../models/pieceMeta.model");
+var boardSetup_1 = require("../models/boardSetup");
 var _ = require('lodash/core');
 var express = require('express');
 var router = express.Router();
@@ -20,8 +20,6 @@ var playerIds;
     playerIds["phrygians"] = "phrygians";
     playerIds["hittites"] = "hittites";
 })(playerIds || (playerIds = {}));
-var BOARD_WIDTH = 24;
-var BOARD_HEIGHT = 16;
 var games = {};
 var lastUpdate = {
     player: null,
@@ -37,7 +35,7 @@ router.post('/', function (req, res) {
             _a[phrygianPlayerId] = playerIds.phrygians,
             _a[hititePlayerId] = playerIds.hittites,
             _a),
-        board: initBoard(),
+        board: boardSetup_1.generateNewBoard(),
     };
     games[room] = newGame;
     chatkit
@@ -108,59 +106,4 @@ router.post('/:room', function (req, res) {
         res.status(404).send("Game not found: " + room);
     }
 });
-function initBoard() {
-    var boardState = [];
-    for (var x = 0; x < BOARD_HEIGHT; x++) {
-        var pieceToPlace = null;
-        if (x === 1) {
-            var rowArray = new Array(BOARD_WIDTH).fill(null);
-            rowArray[2] = makePhrygianPiece('cataphract');
-            rowArray[rowArray.length - 3] = rowArray[4] = makePhrygianPiece('cataphract');
-            rowArray[4] = makePhrygianPiece('archer');
-            rowArray[7] = makePhrygianPiece('archer');
-            rowArray[10] = makePhrygianPiece('archer');
-            rowArray[13] = makePhrygianPiece('archer');
-            rowArray[16] = makePhrygianPiece('archer');
-            rowArray[19] = makePhrygianPiece('archer');
-            boardState.push(rowArray);
-            continue;
-        }
-        else if (x === 2) {
-            pieceToPlace = makePhrygianPiece('hoplite');
-        }
-        else if (x === 3) {
-            pieceToPlace = makePhrygianPiece('levy');
-        }
-        else if (x === BOARD_HEIGHT - 4) {
-            pieceToPlace = makeHititePiece('levy');
-        }
-        else if (x === BOARD_HEIGHT - 3) {
-            pieceToPlace = makeHititePiece(playerIds.hittites);
-        }
-        else if (x === BOARD_HEIGHT - 2) {
-            var rowArray = new Array(BOARD_WIDTH).fill(null);
-            rowArray[2] = makeHititePiece('cataphract');
-            rowArray[BOARD_WIDTH - 3] = makeHititePiece('cataphract');
-            rowArray[4] = makeHititePiece('archer');
-            rowArray[7] = makeHititePiece('archer');
-            rowArray[10] = makeHititePiece('archer');
-            rowArray[13] = makeHititePiece('archer');
-            rowArray[16] = makeHititePiece('archer');
-            rowArray[19] = makeHititePiece('archer');
-            boardState.push(rowArray);
-            continue;
-        }
-        boardState.push(new Array(BOARD_WIDTH).fill(pieceToPlace));
-    }
-    return boardState;
-}
-function makePhrygianPiece(pieceId) {
-    return makePiece(playerIds.phrygians, pieceId);
-}
-function makeHititePiece(pieceId) {
-    return makePiece(playerIds.hittites, pieceId);
-}
-function makePiece(player, pieceId) {
-    return _.extend(_.find(pieceMeta_model_1.pieceDefs, function (meta) { return meta.pieceId === pieceId; }), { player: player });
-}
 module.exports = router;
