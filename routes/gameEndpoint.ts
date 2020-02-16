@@ -21,6 +21,14 @@ enum playerIds {
   hittites = 'hittites',
 }
 
+interface IGame {
+  players: any;
+  nextTurn: any;
+  board: any;
+  player: string; // last to make a move
+  updatedSquares: any; // why is this here?
+}
+
 const games = {};
 let lastUpdate = {
   player: null,
@@ -28,6 +36,7 @@ let lastUpdate = {
 };
 
 router.post('/', (req, res) => {
+  console.log('is this root post hit somehow???');
   const room = req.body.room;
   const phrygianPlayerId = req.body.whitePlayer;
   const hititePlayerId = req.body.blackPlayer;
@@ -36,34 +45,36 @@ router.post('/', (req, res) => {
       [phrygianPlayerId]: playerIds.phrygians,
       [hititePlayerId]: playerIds.hittites,
     },
+    nextTurn: playerIds.phrygians,
     board: generateNewBoard(),
   };
 
-  games[room] = newGame;
-  chatkit
-    .assignRoomRoleToUser({
-      userId: phrygianPlayerId,
-      name: 'Player',
-      roomId: room,
-    })
-    .then(res => {
-      console.log('success');
-      console.log(res);
-    })
-    .catch(err => {
-      console.log('no role :(');
-      console.log(err);
-    });
+  games[room] = games[room] || newGame;
+  chatkit.assignRoomRoleToUser({
+    userId: phrygianPlayerId,
+    name: 'Player',
+    roomId: room,
+  });
+  // .then(res => {
+  //   console.log('success');
+  //   console.log(res);
+  // })
+  // .catch(err => {
+  //   console.log('no role :(');
+  //   console.log(err);
+  // });
   chatkit.assignRoomRoleToUser({
     userId: hititePlayerId,
     name: 'Player',
     roomId: room,
   });
-  res.send(newGame);
+  res.send(games[room]);
 });
 
 router.get('/:room', (req, res) => {
   const room = req.params.room;
+  // console.log(games);
+  // console.log(games[room]);
   const game = games[room];
   if (game) {
     game.player = lastUpdate?.player;
@@ -79,34 +90,36 @@ router.post('/:room', (req, res) => {
   const player = req.body.player;
   const game = games[room];
 
-  const fromRow = req?.body?.updatedSquares?.[0].row;
-  const fromColumn = req?.body?.updatedSquares?.[0].col;
-  const fromPiece = req?.body?.updatedSquares?.[0].piece;
-
-  const toRow = req?.body?.updatedSquares?.[1].row;
-  const toColumn = req?.body?.updatedSquares?.[1].col;
-  const toPiece = req?.body?.updatedSquares?.[1].toColumn;
+  console.log('postHit');
 
   if (game) {
-    const piece = game.board[fromRow][fromColumn];
+    // const piece = game.board[fromRow][fromColumn];
     const playerSide = game.players[player];
+
+    console.log('game if entered');
 
     if (!playerSide) {
       res.status(400).send(`Not a player: ${player}`);
-      // can't rely on bc of damage but not killed
-      // } else if (playerSide !== fromPiece.player) {
-      //   res.status(400).send(`Not your piece. Player=${playerSide}, Piece=${piece}`);
     } else {
-      game.board[fromRow][fromColumn] = fromPiece;
-      game.board[toRow][toColumn] = toPiece;
+      console.log('main block entered');
+      for (let square of req?.body?.updatedSquares ?? []) {
+        const pieceMeta = square.piece;
+        game.board[square.row][square.col] = pieceMeta;
+      }
+      game.nextTurn = req?.body?.newTurn ?? game.nextTurn;
 
-      // just resend the data, client will ignore if it's their move
+      console.log('updatedSquares');
+      console.log(req?.body?.updatedSquares);
+      console.log('gameUpdate');
+      console.log(game.board[0]); // just resend the data, client will ignore if it's their move
+      console.log(games[room].board[0]); // just resend the data, client will ignore if it's their move
       // no need to resend the whole board - maybe when/if there's more validation?
       lastUpdate = req.body;
       res.send(req.body);
       pusher.trigger('game-' + room, 'board-updated', {});
     }
   } else {
+    // TODO: make a new game here
     res.status(404).send(`Game not found: ${room}`);
   }
 });
