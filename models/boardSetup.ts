@@ -41,7 +41,7 @@ export const pieceDefs: IPieceDef[] = [
   },
   {
     pieceType: 'cataphract',
-    health: 8,
+    health: 10,
   },
   {
     pieceType: 'chariot',
@@ -49,7 +49,7 @@ export const pieceDefs: IPieceDef[] = [
   },
   {
     pieceType: 'warElephant',
-    health: 20,
+    health: 24,
   },
   {
     pieceType: 'lightCavalry',
@@ -61,7 +61,7 @@ export const pieceDefs: IPieceDef[] = [
   },
   {
     pieceType: 'general',
-    health: 10,
+    health: 12,
   },
 ];
 

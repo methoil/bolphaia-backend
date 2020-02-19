@@ -33,7 +33,7 @@ exports.pieceDefs = [
     },
     {
         pieceType: 'cataphract',
-        health: 8,
+        health: 10,
     },
     {
         pieceType: 'chariot',
@@ -41,7 +41,7 @@ exports.pieceDefs = [
     },
     {
         pieceType: 'warElephant',
-        health: 20,
+        health: 24,
     },
     {
         pieceType: 'lightCavalry',
@@ -53,7 +53,7 @@ exports.pieceDefs = [
     },
     {
         pieceType: 'general',
-        health: 10,
+        health: 12,
     },
 ];
 var BOARD_WIDTH = 18;
