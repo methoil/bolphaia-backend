@@ -37,7 +37,7 @@ exports.pieceDefs = [
     },
     {
         pieceType: 'chariot',
-        health: 10,
+        health: 8,
     },
     {
         pieceType: 'warElephant',

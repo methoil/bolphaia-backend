@@ -45,7 +45,7 @@ export const pieceDefs: IPieceDef[] = [
   },
   {
     pieceType: 'chariot',
-    health: 10,
+    health: 8,
   },
   {
     pieceType: 'warElephant',
